@@ -4,7 +4,7 @@ from viterbi import viterbii
 from hmmlearn import hmm
 from forward_and_back_algorithm import forward, backward, likelihood, posterior_prob, pbwd
 import matplotlib.pyplot as plt
-from baum_welch import baum_post, gamma, epsillon, baum_welch0
+from baum_welch import baum_post, gamma, epsillon, baum_welch_trans, baum_welch_emmis
 
 m = 2
 paa1 = np.random.random()
@@ -148,12 +148,13 @@ plt.legend((p1[0], p2[0], p3[0]), ('OUR', 'VA', 'HMM', 'BW'))
 
 
 
-print('\n', gamma(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
+#print('\n', gamma(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
 
-print('\n', epsillon(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
+#print('\n', epsillon(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
 
-anew = baum_welch0(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)[0]
-bnew = baum_welch0(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)[1]
+anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+
 print('\n', anew)
 print('\n', bnew)
 

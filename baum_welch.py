@@ -87,7 +87,7 @@ def epsillon(obs, pi, t, e, m, l):
     return eps
 
 
-def baum_welch0(obs, pi, t, e, m, l):
+def baum_welch_trans(obs, pi, t, e, m, l):
     global transition_matrix, emission_matrix
     gamm = gamma(obs, pi, t, e, m, l)
     epsi = epsillon(obs, pi, t, e, m, l)
@@ -106,8 +106,14 @@ def baum_welch0(obs, pi, t, e, m, l):
                 sumgam += gamm[k, i]
             t[i, j] = sumeps / sumgam
 
+    return t
+
+
+def baum_welch_emmis(obs, pi, t, e, m, l):
+
+    gamm = gamma(obs, pi, t, e, m, l)
     summg = 0
-    summep = 0
+    summgall = 0
     for i in range(m):
         for j in range(l):
             summgall = 0
@@ -120,6 +126,6 @@ def baum_welch0(obs, pi, t, e, m, l):
                 summg += delta * gamm[k, i]
                 summgall += gamm[k, i]
             e[i, obs[j][1]] = summg / summgall
+    return e
 
-    return t,  e
 
