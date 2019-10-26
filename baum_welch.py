@@ -7,14 +7,14 @@ def forward(obs, pi, t, e, m, l):
     alpha = np.zeros((l, m))
 
     for k in range(m):  # задаем начальные параметры для дальнейшего их улучшения
-        alpha[0, k] = pi[k] * e[k, obs[0]]
+        alpha[0, k] = pi[k] * e[k, obs[0][1]]
 
 #   рекурсивно получаем следющиее элементы aplha
     for i in range(1, l):
         for l in range(m):
             for k in range(m):
                 alpha[i, l] += alpha[i - 1, k] * t[k, l]
-            alpha[i, l] *= e[l, obs[i]]
+            alpha[i, l] *= e[l, obs[i][1]]
 
     return alpha
 
@@ -36,7 +36,7 @@ def backward(obs, t, e, m, l):
     for i in range(l - 2, -1, -1):
         for k in range(m):
             for l in range(m):
-                beta[i, k] += beta[i + 1, l] * t[k, l] * e[l, obs[i + 1]]
+                beta[i, k] += beta[i + 1, l] * t[k, l] * e[l, obs[i + 1][1]]
 
     return beta
 
@@ -53,17 +53,32 @@ def baum_post(obs, pi, t, e, m, l):
             posterior[i, k] = alpha[i, k] * beta[i, k] / prob
     return posterior
 
-def baum_welch1(obs, pi, t, e, m, l, iter):
+def baum_welch(obs, pi, t, e, m, l, iter):
 
     for n in range(iter):
         alpha = forward(obs, pi, t, e, m, l)
         beta = backward(obs, t, e, m, l)
 
-        xi = np.zeros((m, m, l - 1))
-        for t in range(l - 1):
-            denominator = 1
+        g = np.zeros((l, m))
+        summ = 0
+        for t in range(l):
             for i in range(m):
-                numerator = 1
-                xi[i, :, t] = numerator / denominator
+                summ = 0
+                for j in range(m):
+                    summ += alpha[t, j] * beta[t, j]
+                g[t, i] = alpha[t, i] * beta[t, i] / summ
+
+        eps = np.zeros((l, m, m))
+
+        summ = 0
+        for k in range(l):
+            for i in range(m):
+                summ = 0
+                for j in range(m):
+                    summ += alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]
+                summ += alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]
+                for j in range(m):
+                    eps[k, i, j] = alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]] / summ
+
 
 

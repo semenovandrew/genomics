@@ -4,7 +4,7 @@ from viterbi import viterbii
 from hmmlearn import hmm
 from forward_and_back_algorithm import forward, backward, likelihood, posterior_prob, pbwd
 import matplotlib.pyplot as plt
-from baum_welch import baum_post, baum_welch1
+from baum_welch import baum_post, baum_welch
 
 m = 2
 paa1 = np.random.random()
@@ -125,7 +125,7 @@ for i in range(L):
 
 print('\nPOSTERIOR PROBABILITY FROM HMMLEARN:\n', model.predict_proba(X[0]))
 
-#print('\nPOSTERIOR PROBABILITY(BW):\n', baum_post(sequence, boxes_prob, transition_matrix, emission_matrix, m, L), '\n')
+print('\nPOSTERIOR PROBABILITY(BW):\n', baum_post(sequence, boxes_prob, transition_matrix, emission_matrix, m, L), '\n')
 
 pi = posterior_prob(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
 fandb_hidden = np.argmax(pi, axis=1)
@@ -137,7 +137,7 @@ print('\n HIDDEN SEQUENCE FROM FORWARD AND BACKWARD ALGORITHMS:\n', fandb_hidden
 
 
 #   baum welch training
-#bwpost = baum_forward_backward(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)[1]
+
 #bwhidden = np.argmax(bwpost, axis=1)
 #print('\n HIDDEN SEQUENCE FROM BAUM-WELCH ALGORITHM:\n', bwhidden, '\n')
 
@@ -152,5 +152,3 @@ plt.legend((p1[0], p2[0], p3[0]), ('OUR', 'VA', 'HMM', 'BW'))
 v = np.array([0] * L)
 for i in range(L):
     v[i] = sequence[i][1]
-
-print(baum_welch1(v, boxes_prob, transition_matrix, emission_matrix, m, L, 100))
