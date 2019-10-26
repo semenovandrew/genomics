@@ -115,6 +115,7 @@ def baum_welch_emmis(obs, pi, t, e, m, l):
 
     global emission_matrix
     gamm = gamma(obs, pi, t, e, m, l)
+    em = np.zeros((m, m + 1))
     summg = 0
     summgall = 0
     for i in range(m):
@@ -122,15 +123,14 @@ def baum_welch_emmis(obs, pi, t, e, m, l):
             summg = 0
             summgall = 0
             for k in range(l):
-                if obs[j][1] == obs[k][1]:
+                if obs[k][1] == obs[j][1]:
                     delt = 1
                 else:
                     delt = 0
-                    summg = 0
                 summg = summg + delt * gamm[k, i]
                 summgall += gamm[k, i]
-            e[i, obs[j][1]] = summg / summgall
+            em[i, obs[j][1]] = summg / summgall
+
+    e = em
 
     return e
-
-
