@@ -22,7 +22,8 @@ pab = 0.6
 pba = 0.2
 pbb = 0.8
 #L = int(input('Enter a length of a sequence: '))
-L = 10
+L = 100
+iterations = 150
 sequence = []
 boxes = ['Box 1', 'Box 2']
 boxes_prob = np.array([0.5, 0.5])
@@ -180,7 +181,7 @@ while startt and starte >= threshhold:
     srarte = emiss[ii] - emiss[ii - 1]
     ii += 1'''
 
-for i in range(1000):
+for i in range(iterations):
     anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
     bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
 
@@ -194,5 +195,5 @@ print('\nNEW EMISSION:\n', emiss[-1])
 
 h = viterbii(sequence, boxes_prob, new_emiss, new_trans, m, L)[0]
 hh = np.argmax(h, axis=1)
-print('\n', hh)
-print('\n', counter_for_boxes)
+print('\nOUR HIDDEN:\n', counter_for_boxes, '\n')
+print('\nBW HIDDEN:\n', hh, '\n')
