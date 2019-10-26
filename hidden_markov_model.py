@@ -156,17 +156,43 @@ plt.legend((p1[0], p2[0], p3[0]), ('OUR', 'VA', 'HMM', 'BW'))
 #   find answer
 trans = []
 emiss = []
-threshhold = 0.0001
+'''threshhold = 0.0001
 thresh_trans = [[threshhold, threshhold], [threshhold, threshhold]]
 thresh_emiss = [[threshhold, threshhold, threshhold], [threshhold, threshhold, threshhold]]
-start = 1
-while start >= threshhold:
+startt = 1
+starte = 1
+
+anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+
+trans.append(anew)
+emiss.append(bnew)
+
+ii = 1
+while startt and starte >= threshhold:
     anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
     bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
 
     trans.append(anew)
     emiss.append(bnew)
 
-    print('\n', trans[i])
-    print('\n', emiss[i])
+    startt = trans[ii] - trans[ii - 1]
+    srarte = emiss[ii] - emiss[ii - 1]
+    ii += 1'''
 
+for i in range(1000):
+    anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+    bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+
+    trans.append(anew)
+    emiss.append(bnew)
+
+new_trans = trans[-1]
+new_emiss = emiss[-1]
+print('\nNEW TRANSITION:\n', trans[-1])
+print('\nNEW EMISSION:\n', emiss[-1])
+
+h = viterbii(sequence, boxes_prob, new_emiss, new_trans, m, L)[0]
+hh = np.argmax(h, axis=1)
+print('\n', hh)
+print('\n', counter_for_boxes)
