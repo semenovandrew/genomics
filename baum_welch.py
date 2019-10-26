@@ -86,7 +86,32 @@ def epsillon(obs, pi, t, e, m, l):
     return eps
 
 
-def baum_welch(obs, pi, t, e, m, l, iters):
+def baum_welch(obs, pi, t, e, m, l):
+
+    gamm = np.zeros((l, m))
+    for i in range(m):
+        gamm[0, i] = pi[i] * e[i, obs[0][1]]
+    epsil = np.zeros((l, m))
+    ans = np.array([0] * l)
+    for i in range(1, l):
+        for j in range(m):
+            for k in range(m):
+                if gamm[i, k] < gamm[i - 1, j] * t[j, k] * e[k, obs[i][1]]:
+                    gamm[i, k] = gamm[i - 1, j] * t[j, k] * e[k, obs[i][1]]
+                    epsil[i, k] = j
+
+    ans[l - 1] = 1
+
+    for i in range(1, m):
+        if gamm[l - 1, i] > gamm[l - 1, i - 1]:
+            ans[l - 1] = i
+
+    for i in range(l - 2, -1, -1):
+        ans[i] = epsil[i + 1, ans[i + 1]]
+    return ans
+
+
+def baum_welch0(obs, pi, t, e, m, l, iters):
 
     for n in range(iters):
 
@@ -109,8 +134,8 @@ def baum_welch(obs, pi, t, e, m, l, iters):
             for j in range(m):
                 summgam = 0
                 if obs[j][1] == i:
-                    for t in range(l):
-                        summgam += gamm[t]
-                    e[j] = summgam / summgamall
+                    for o in range(l):
+                        summgam += gamm[o]
+                        e[j, i] = 1
+    return t, j
 
-    return t, e

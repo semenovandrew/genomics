@@ -7,15 +7,14 @@ def baum_forward(obs, pi, t, e, m, l):
     alpha = np.zeros((l, m))
 
     for k in range(m):  # задаем начальные параметры для дальнейшего их улучшения
-        alpha[0, k] = pi[k] * e[k, obs[0][1]]
+        alpha[0, k] = pi[k] * e[k, obs[0]]
 
 #   рекурсивно получаем следющиее элементы aplha
     for i in range(1, l):
         for l in range(m):
             for k in range(m):
-                if alpha[i, l] < alpha[i - 1, k] * t[k, l]:
-                    alpha[i, l] += alpha[i - 1, k] * t[k, l]
-            alpha[i, l] *= e[l, obs[i][1]]
+                alpha[i, l] += alpha[i - 1, k] * t[k, l]
+            alpha[i, l] *= e[l, obs[i]]
 
     return alpha
 
@@ -37,7 +36,7 @@ def baum_backward(obs, t, e, m, l):
     for i in range(l - 2, -1, -1):
         for k in range(m):
             for l in range(m):
-                beta[i, k] += beta[i + 1, l] * t[k, l] * e[l, obs[i + 1][1]]
+                beta[i, k] += beta[i + 1, l] * t[k, l] * e[l, obs[i + 1]]
 
     return beta
 

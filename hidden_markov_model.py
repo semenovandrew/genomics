@@ -4,8 +4,7 @@ from viterbi import viterbii
 from hmmlearn import hmm
 from forward_and_back_algorithm import forward, backward, likelihood, posterior_prob, pbwd
 import matplotlib.pyplot as plt
-from baum_welch import baum_post, baum_welch
-from baum_welch_test import epsillon
+from baum_welch import baum_post, baum_welch, gamma, epsillon
 
 m = 2
 paa1 = np.random.random()
@@ -23,7 +22,7 @@ pab = 0.7
 pba = 0.6
 pbb = 0.4
 #L = int(input('Enter a length of a sequence: '))
-L = 5
+L = 10
 sequence = []
 boxes = ['Box 1', 'Box 2']
 boxes_prob = np.array([0.5, 0.5])
@@ -147,9 +146,5 @@ plt.title('Графическа оценка алгоритма Витерби')
 plt.legend((p1[0], p2[0], p3[0]), ('OUR', 'VA', 'HMM', 'BW'))
 #plt.show()
 
-v = np.array([0] * L)
-for i in range(L):
-    v[i] = sequence[i][1]
 
-print(baum_welch(sequence, boxes_prob, transition_matrix, emission_matrix, m, L, 100)[0])
-print(baum_welch(sequence, boxes_prob, transition_matrix, emission_matrix, m, L, 100)[1])
+print('\n', baum_welch(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
