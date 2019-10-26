@@ -152,17 +152,21 @@ plt.legend((p1[0], p2[0], p3[0]), ('OUR', 'VA', 'HMM', 'BW'))
 
 #print('\n', epsillon(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
 
-anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
-bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
 
-print('\n', anew)
-print('\n', bnew)
-
-print(bnew[0].sum())
-print(bnew[1].sum())
+#   find answer
 trans = []
 emiss = []
+threshhold = 0.0001
+thresh_trans = [[threshhold, threshhold], [threshhold, threshhold]]
+thresh_emiss = [[threshhold, threshhold, threshhold], [threshhold, threshhold, threshhold]]
+start = 1
+while start >= threshhold:
+    anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+    bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
 
-trans.append(anew)
-emiss.append(bnew)
+    trans.append(anew)
+    emiss.append(bnew)
+
+    print('\n', trans[i])
+    print('\n', emiss[i])
 

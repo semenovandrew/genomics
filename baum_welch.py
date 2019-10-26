@@ -106,9 +106,9 @@ def baum_welch_trans(obs, pi, t, e, m, l):
                 sumgam += gamm[k, i]
             t[i, j] = sumeps / sumgam
 
-    boxes_prob = pi
     transition_matrix = t
-    return t
+
+    return transition_matrix
 
 
 def baum_welch_emmis(obs, pi, t, e, m, l):
@@ -132,5 +132,5 @@ def baum_welch_emmis(obs, pi, t, e, m, l):
             em[i, obs[j][1]] = summg / summgall
 
     e = em
-
-    return e
+    emission_matrix = e
+    return emission_matrix
