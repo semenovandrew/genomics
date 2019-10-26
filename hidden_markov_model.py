@@ -23,7 +23,7 @@ pba = 0.2
 pbb = 0.8
 #L = int(input('Enter a length of a sequence: '))
 L = 100
-iterations = 150
+iterations = 10
 sequence = []
 boxes = ['Box 1', 'Box 2']
 boxes_prob = np.array([0.5, 0.5])
@@ -138,17 +138,6 @@ print('\n FROM HMM LEARN:\n', X[1])
 #bwhidden = np.argmax(bwpost, axis=1)
 #print('\n HIDDEN SEQUENCE FROM BAUM-WELCH ALGORITHM:\n', bwhidden, '\n')
 
-# our prediction vs viterbi
-ind = np.arange(L)
-p1 = plt.bar(ind, counter_for_boxes)
-p2 = plt.bar(ind, hid_seq, bottom=counter_for_boxes)
-p3 = plt.bar(ind, X[1], bottom=hid_seq)
-plt.title('Графическа оценка алгоритма Витерби')
-plt.legend((p1[0], p2[0], p3[0]), ('OUR', 'VA', 'HMM', 'BW'))
-#plt.show()
-
-
-
 #print('\n', gamma(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
 
 #print('\n', epsillon(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
@@ -188,12 +177,21 @@ for i in range(iterations):
     trans.append(anew)
     emiss.append(bnew)
 
-new_trans = trans[-1]
-new_emiss = emiss[-1]
-print('\nNEW TRANSITION:\n', trans[-1])
-print('\nNEW EMISSION:\n', emiss[-1])
+
+new_trans = anew
+new_emiss = bnew
+print('\nNEW TRANSITION:\n', anew)
+print('\nNEW EMISSION:\n', bnew)
 
 h = viterbii(sequence, boxes_prob, new_emiss, new_trans, m, L)[0]
 hh = np.argmax(h, axis=1)
 print('\nOUR HIDDEN:\n', counter_for_boxes, '\n')
 print('\nBW HIDDEN:\n', hh, '\n')
+
+# our prediction vs viterbi
+ind = np.arange(L)
+p1 = plt.bar(ind, counter_for_boxes)
+p2 = plt.bar(ind, hid_seq, bottom=counter_for_boxes)
+plt.title('Графическа оценка алгоритма Витерби')
+plt.legend((p1[0], p2[0]), ('OUR', 'VA'))
+#plt.show()'''
