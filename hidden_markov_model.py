@@ -160,4 +160,9 @@ print('\n', bnew)
 
 print(bnew[0].sum())
 print(bnew[1].sum())
+trans = []
+emiss = []
+
+trans.append(anew)
+emiss.append(bnew)
 

@@ -64,7 +64,7 @@ def gamma(obs, pi, t, e, m, l):
             summ = 0
             for j in range(m):
                 summ += alpha[y, j] * beta[y, j]
-            g[y, i] = alpha[y, i] * beta[y, i] / summ
+            g[y, i] = (alpha[y, i] * beta[y, i]) / summ
     return g
 
 
@@ -74,21 +74,21 @@ def epsillon(obs, pi, t, e, m, l):
     beta = backward(obs, t, e, m, l)
     eps = np.zeros((l, m, m))
 
-    summ = 0
+    summ0 = 0
     for k in range(l):
-        summ = 0
+        summ0 = 0
         for i in range(m):
             for j in range(m):
-                summ += alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]
+                summ0 += alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]
         for i in range(m):
             for j in range(m):
-                eps[k - 1, i, j] = (alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]) / summ
+                eps[k - 1, i, j] = (alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]) / summ0
 
     return eps
 
 
 def baum_welch_trans(obs, pi, t, e, m, l):
-    global transition_matrix, emission_matrix
+    global transition_matrix, boxes_prob
     gamm = gamma(obs, pi, t, e, m, l)
     epsi = epsillon(obs, pi, t, e, m, l)
 
@@ -106,26 +106,31 @@ def baum_welch_trans(obs, pi, t, e, m, l):
                 sumgam += gamm[k, i]
             t[i, j] = sumeps / sumgam
 
+    boxes_prob = pi
+    transition_matrix = t
     return t
 
 
 def baum_welch_emmis(obs, pi, t, e, m, l):
 
+    global emission_matrix
     gamm = gamma(obs, pi, t, e, m, l)
     summg = 0
     summgall = 0
     for i in range(m):
         for j in range(l):
-            summgall = 0
             summg = 0
+            summgall = 0
             for k in range(l):
-                if obs[k][1] == obs[j][1]:
-                    delta = 1
+                if obs[j][1] == obs[k][1]:
+                    delt = 1
                 else:
-                    delta = 0
-                summg += delta * gamm[k, i]
+                    delt = 0
+                    summg = 0
+                summg = summg + delt * gamm[k, i]
                 summgall += gamm[k, i]
             e[i, obs[j][1]] = summg / summgall
+
     return e
 
 
