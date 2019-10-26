@@ -5,6 +5,7 @@ from hmmlearn import hmm
 from forward_and_back_algorithm import forward, backward, likelihood, posterior_prob, pbwd
 import matplotlib.pyplot as plt
 from baum_welch import baum_post, baum_welch
+from baum_welch_test import epsillon
 
 m = 2
 paa1 = np.random.random()
@@ -127,13 +128,9 @@ print('\nPOSTERIOR PROBABILITY FROM HMMLEARN:\n', model.predict_proba(X[0]))
 
 print('\nPOSTERIOR PROBABILITY(BW):\n', baum_post(sequence, boxes_prob, transition_matrix, emission_matrix, m, L), '\n')
 
-pi = posterior_prob(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
-fandb_hidden = np.argmax(pi, axis=1)
-
 print('\n INVISIBLE OUTCOMES(our prediction):\n', counter_for_boxes, '\n')
 print('\n VITERBI ALGORITHM\n', hid_seq, '\n')
 print('\n FROM HMM LEARN:\n', X[1])
-print('\n HIDDEN SEQUENCE FROM FORWARD AND BACKWARD ALGORITHMS:\n', fandb_hidden, '\n')
 
 
 #   baum welch training
@@ -149,6 +146,10 @@ p3 = plt.bar(ind, X[1], bottom=hid_seq)
 plt.title('Графическа оценка алгоритма Витерби')
 plt.legend((p1[0], p2[0], p3[0]), ('OUR', 'VA', 'HMM', 'BW'))
 #plt.show()
+
 v = np.array([0] * L)
 for i in range(L):
     v[i] = sequence[i][1]
+
+print(baum_welch(sequence, boxes_prob, transition_matrix, emission_matrix, m, L, 100)[0])
+print(baum_welch(sequence, boxes_prob, transition_matrix, emission_matrix, m, L, 100)[1])
