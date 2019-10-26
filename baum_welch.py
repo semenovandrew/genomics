@@ -59,83 +59,67 @@ def gamma(obs, pi, t, e, m, l):
     beta = backward(obs, t, e, m, l)
     g = np.zeros((l, m))
     summ = 0
-    for t in range(l):
+    for y in range(l):
         for i in range(m):
             summ = 0
             for j in range(m):
-                summ += alpha[t, j] * beta[t, j]
-            g[t, i] = alpha[t, i] * beta[t, i] / summ
+                summ += alpha[y, j] * beta[y, j]
+            g[y, i] = alpha[y, i] * beta[y, i] / summ
     return g
 
 
 def epsillon(obs, pi, t, e, m, l):
+
     alpha = forward(obs, pi, t, e, m, l)
     beta = backward(obs, t, e, m, l)
     eps = np.zeros((l, m, m))
-    summ = 0
 
+    summ = 0
     for k in range(l):
+        summ = 0
         for i in range(m):
-            summ = 0
             for j in range(m):
                 summ += alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]
-            summ += alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]
+        for i in range(m):
             for j in range(m):
-                eps[k, i, j] = alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]] / summ
+                eps[k - 1, i, j] = (alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]) / summ
 
     return eps
 
 
-def baum_welch(obs, pi, t, e, m, l):
+def baum_welch0(obs, pi, t, e, m, l):
+    global transition_matrix, emission_matrix
+    gamm = gamma(obs, pi, t, e, m, l)
+    epsi = epsillon(obs, pi, t, e, m, l)
 
-    gamm = np.zeros((l, m))
     for i in range(m):
-        gamm[0, i] = pi[i] * e[i, obs[0][1]]
-    epsil = np.zeros((l, m))
-    ans = np.array([0] * l)
-    for i in range(1, l):
+        pi[i] = gamm[0, i]
+
+    sumeps = 0
+    sumgam = 0
+    for i in range(m):
         for j in range(m):
-            for k in range(m):
-                if gamm[i, k] < gamm[i - 1, j] * t[j, k] * e[k, obs[i][1]]:
-                    gamm[i, k] = gamm[i - 1, j] * t[j, k] * e[k, obs[i][1]]
-                    epsil[i, k] = j
+            sumeps = 0
+            sumgam = 0
+            for k in range(l - 1):
+                sumeps += epsi[k, i, j]
+                sumgam += gamm[k, i]
+            t[i, j] = sumeps / sumgam
 
-    ans[l - 1] = 1
+    summg = 0
+    summep = 0
+    for i in range(m):
+        for j in range(l):
+            summgall = 0
+            summg = 0
+            for k in range(l):
+                if obs[k][1] == obs[j][1]:
+                    delta = 1
+                else:
+                    delta = 0
+                summg += delta * gamm[k, i]
+                summgall += gamm[k, i]
+            e[i, obs[j][1]] = summg / summgall
 
-    for i in range(1, m):
-        if gamm[l - 1, i] > gamm[l - 1, i - 1]:
-            ans[l - 1] = i
-
-    for i in range(l - 2, -1, -1):
-        ans[i] = epsil[i + 1, ans[i + 1]]
-    return ans
-
-
-def baum_welch0(obs, pi, t, e, m, l, iters):
-
-    for n in range(iters):
-
-        gamm = gamma(obs, pi, t, e, m, l)
-        epsil = epsillon(obs, pi, t, e, m, l)
-
-        #   new parameters
-        summgam = 0
-        summeps = 0
-        for i in range(l - 1):
-            summgam += gamm[i]
-            summeps += epsil[i]
-        t = summeps / summgam
-
-        summgam = 0
-        summgamall = 0
-        for k in range(l):
-            summgamall += gamm[k]
-        for i in range(m + 1):
-            for j in range(m):
-                summgam = 0
-                if obs[j][1] == i:
-                    for o in range(l):
-                        summgam += gamm[o]
-                        e[j, i] = 1
-    return t, j
+    return t,  e
 

@@ -4,7 +4,7 @@ from viterbi import viterbii
 from hmmlearn import hmm
 from forward_and_back_algorithm import forward, backward, likelihood, posterior_prob, pbwd
 import matplotlib.pyplot as plt
-from baum_welch import baum_post, baum_welch, gamma, epsillon
+from baum_welch import baum_post, gamma, epsillon, baum_welch0
 
 m = 2
 paa1 = np.random.random()
@@ -17,10 +17,10 @@ pbb1 = np.random.random()
 pbac = 1 / (pba1 + pbb1)
 pba = pba1 * pbac
 pbb = pbb1 * pbac
-paa = 0.3
-pab = 0.7
-pba = 0.6
-pbb = 0.4
+paa = 0.4
+pab = 0.6
+pba = 0.2
+pbb = 0.8
 #L = int(input('Enter a length of a sequence: '))
 L = 10
 sequence = []
@@ -47,11 +47,11 @@ a21 = x21 * aa1
 a22 = x22 * aa1
 a23 = x23 * aa1
 a11 = 0.2
-a12 = 0.3
-a13 = 0.5
+a12 = 0.5
+a13 = 0.3
 a21 = 0.6
-a22 = 0.1
-a23 = 0.3
+a22 = 0.3
+a23 = 0.1
 events = np.array(['Red', 'Green', 'Blue'])
 nevents = 3
 emission_matrix = np.array([[a11, a12, a13], [a21, a22, a23]])
@@ -147,4 +147,16 @@ plt.legend((p1[0], p2[0], p3[0]), ('OUR', 'VA', 'HMM', 'BW'))
 #plt.show()
 
 
-print('\n', baum_welch(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
+
+print('\n', gamma(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
+
+print('\n', epsillon(sequence, boxes_prob, transition_matrix, emission_matrix, m, L))
+
+anew = baum_welch0(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)[0]
+bnew = baum_welch0(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)[1]
+print('\n', anew)
+print('\n', bnew)
+
+print(bnew[0].sum())
+print(bnew[1].sum())
+
