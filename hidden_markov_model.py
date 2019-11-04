@@ -4,7 +4,7 @@ from viterbi import viterbii
 from hmmlearn import hmm
 from forward_and_back_algorithm import forward, backward, likelihood, posterior_prob, pbwd
 import matplotlib.pyplot as plt
-from baum_welch import baum_post, gamma, epsillon, baum_welch_trans, baum_welch_emmis
+from baum_welch import baum_post, baum_welch_trans, baum_welch_emmis
 
 m = 2
 paa1 = np.random.random()
@@ -23,7 +23,7 @@ pba = 0.2
 pbb = 0.8
 #L = int(input('Enter a length of a sequence: '))
 L = 100
-iterations = 200
+iterations = 25
 sequence = []
 boxes = ['Box 1', 'Box 2']
 boxes_prob = np.array([0.5, 0.5])
@@ -146,38 +146,31 @@ print('\n FROM HMM LEARN:\n', X[1])
 #   find answer
 trans = []
 emiss = []
-'''threshhold = 0.0001
-thresh_trans = [[threshhold, threshhold], [threshhold, threshhold]]
-thresh_emiss = [[threshhold, threshhold, threshhold], [threshhold, threshhold, threshhold]]
-startt = 1
-starte = 1
+
+threshhold = 0.00000001
 
 anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+trans.append(anew.tolist())
 bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+emiss.append(bnew.tolist())
+anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+trans.append(anew.tolist())
+bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+emiss.append(bnew.tolist())
 
-trans.append(anew)
-emiss.append(bnew)
-
-ii = 1
-while startt and starte >= threshhold:
+it = 1
+while abs(trans[it][0][0] - trans[it - 1][0][0]) > threshhold:
     anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+    trans.append(anew.tolist())
     bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+    emiss.append(bnew.tolist())
+    it += 1
 
-    trans.append(anew)
-    emiss.append(bnew)
+print(it)
 
-    startt = trans[ii] - trans[ii - 1]
-    srarte = emiss[ii] - emiss[ii - 1]
-    ii += 1'''
 
-for i in range(iterations):
-    anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
-    bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
-
-    print('\n', anew, '\n', '\n', bnew, '\n')
-
-new_trans = anew
-new_emiss = bnew
+new_trans = trans[-1]
+new_emiss = emiss[-1]
 print('\nNEW TRANSITION:\n', new_trans)
 print('\nNEW EMISSION:\n', new_emiss)
 
@@ -186,10 +179,19 @@ hh = np.argmax(h, axis=1)
 print('\nOUR HIDDEN:\n', counter_for_boxes, '\n')
 print('\nBW HIDDEN:\n', hh, '\n')
 
+
 # our prediction vs viterbi
 ind = np.arange(L)
 p1 = plt.bar(ind, counter_for_boxes)
 p2 = plt.bar(ind, hid_seq, bottom=counter_for_boxes)
 plt.title('Графическа оценка алгоритма Витерби')
 plt.legend((p1[0], p2[0]), ('OUR', 'VA'))
-#plt.show()'''
+plt.show()
+
+plt.figure(figsize=(15, 4))
+plt.xlabel('Length of the sequence', fontsize=20)
+plt.ylabel('$P(x)$', fontsize=20)
+plt.title('Posterior probability and Viterbi most likely path', fontsize = 20)
+plt.plot(range(L), baum_post(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)[:, 0], color='black')
+plt.plot(range(L), hh, color='blue', linestyle='dotted')
+plt.show()
