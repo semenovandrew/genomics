@@ -42,23 +42,17 @@ print(b)
 #   improve our randomizer:
 
 out_count0 = np.random.random()
-out_count0 = 0.4
+out_count0 = 0.9
 b = 1
 print(out_count0)
 
 total = 0
 g = 0
 for i in range(m):
-    while out_count0 > total:
-        total += emission_matrix[b][i]
-        if out_count0 < total:
-            if g >= int(1) and emission_matrix[b][g - 1] <= out_count0 < total:
-                sequence.append([events[g], g])
-            else:
-                sequence.append([events[i], i])
-        g += 1
-
-
+    total += emission_matrix[b][i]
+    if out_count0 < total:
+        sequence.append([events[i], i])
+        break
 print(sequence)
 
 
