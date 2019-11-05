@@ -14,7 +14,7 @@ pba = 0.1
 pbb = 0.9
 #L = int(input('Enter a length of a sequence: '))
 sequence = []
-L = 100
+L = 10
 dices = ['Fair Dice', 'Loaded Dice']
 dices_start = np.array([0.5, 0.5])
 # transition
@@ -32,7 +32,8 @@ print('\nEMISSION MATRIX', emission_matrix1, sep='\n ')
 # randomize and sequence
 counter_for_dices = []
 count0 = np.random.random()
-if 0 <= count0 <= dices_start[0]:
+count0 = 0.8
+if 0 <= count0 < dices_start[0]:
     b = 0
 else:
     b = 1
@@ -42,24 +43,46 @@ print(b)
 #   improve our randomizer:
 
 out_count0 = np.random.random()
-out_count0 = 0.69
-b = 1
+out_count0 = 0.4
 print(out_count0)
 
 total = 0
-g = 0
 for i in range(m):
-    while out_count0 > total:
-        total += emission_matrix[b][i]
-        if out_count0 < total:
-            if g >= int(1) and emission_matrix[b][g - 1] < out_count0 <= total:
-                sequence.append([events[g], g])
-            else:
-                sequence.append([events[i], i])
-        g += 1
-
-
+    total += emission_matrix[b][i]
+    if out_count0 <= total:
+        sequence.append([events[i], i])
+sequence = [sequence[0]]
 print(sequence)
+
+
+#   next steps
+useless_list = []
+for i in range(1, L):
+    count = np.random.random()
+    count = 0.7
+    if 0 <= count < transition_matrix[b][0]:
+        b = 0
+    else:
+        b = 1
+    counter_for_dices.append(b)
+
+    out_count = np.random.random()
+    totaln = 0
+    for j in range(m):
+        totaln += emission_matrix[b][j]
+        if out_count <= totaln:
+            useless_list.append([events[j], j])
+
+indexes = []
+for i in range(len(useless_list)):
+    if useless_list[0] == useless_list[i]:
+        indexes.append(i)
+print(indexes)
+step = indexes[1] - indexes[0]
+
+
+for i in range(0, len(useless_list), step):
+    sequence.append(useless_list[i])
 
 
 print('\n VISIBLE OUTCOMES:\n', sequence)
