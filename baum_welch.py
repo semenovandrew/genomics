@@ -109,11 +109,11 @@ def baum_welch_trans(obs, pi, t, e, m, l):
     return t
 
 
-def baum_welch_emmis(obs, pi, t, e, m, l):
+def baum_welch_emmis(obs, pi, t, e, m, v, l):
 
     global emission_matrix
     gamm = gamma(obs, pi, t, e, m, l)
-    em = np.zeros((m, m + 1))
+    em = np.zeros((m, v))
     summg = 0
     summgall = 0
     for i in range(m):

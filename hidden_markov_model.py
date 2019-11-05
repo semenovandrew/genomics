@@ -6,7 +6,8 @@ from forward_and_back_algorithm import forward, backward, likelihood, posterior_
 import matplotlib.pyplot as plt
 from baum_welch import baum_post, baum_welch_trans, baum_welch_emmis
 
-m = 2
+m = 2 # hidden states
+vv = 3 # visible states
 paa1 = np.random.random()
 pab1 = np.random.random()
 pabc = 1 / (paa1 + pab1)
@@ -151,18 +152,18 @@ threshhold = 0.00000001
 
 anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
 trans.append(anew.tolist())
-bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, vv, L)
 emiss.append(bnew.tolist())
 anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
 trans.append(anew.tolist())
-bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, vv,  L)
 emiss.append(bnew.tolist())
 
 it = 1
 while abs(trans[it][0][0] - trans[it - 1][0][0]) > threshhold:
     anew = baum_welch_trans(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
     trans.append(anew.tolist())
-    bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)
+    bnew = baum_welch_emmis(sequence, boxes_prob, transition_matrix, emission_matrix, m, vv, L)
     emiss.append(bnew.tolist())
     it += 1
 
@@ -192,6 +193,6 @@ plt.figure(figsize=(15, 4))
 plt.xlabel('Length of the sequence', fontsize=20)
 plt.ylabel('$P(x)$', fontsize=20)
 plt.title('Posterior probability and Viterbi most likely path', fontsize = 20)
-plt.plot(range(L), baum_post(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)[:, 0], color='black')
+plt.plot(range(L), baum_post(sequence, boxes_prob, transition_matrix, emission_matrix, h, L)[:, 0], color='black')
 plt.plot(range(L), hh, color='blue', linestyle='dotted')
 plt.show()
