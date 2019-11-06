@@ -2,7 +2,6 @@ import numpy as np
 from scipy.special import logsumexp
 from viterbi import viterbii
 
-
 #   forward algorithm
 def forward(obs, pi, t, e, m, l):
     alpha = np.zeros((l, m))

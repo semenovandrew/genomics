@@ -47,8 +47,7 @@ total = 0
 kok = 0
 for j in range(visible):
     total += emmit[b][j]
-    kok = total - out_count0
-    if kok >= 0:
+    if out_count0 <= total:
         sequence.append([events[j], j])
         break
 
@@ -67,8 +66,7 @@ for i in range(1, L):
     koko = 0
     for j in range(visible):
         totaln += emmit[b][j]
-        koko = totaln - out_count
-        if koko >= 0:
+        if out_count <= totaln:
             sequence.append([events[j], j])
             break
 
@@ -143,7 +141,7 @@ plt.show()
 trans = []
 emiss = []
 
-threshhold = 0.0000000000000000000000001
+threshhold = 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001
 
 
 start_time = time.time()
