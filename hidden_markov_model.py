@@ -4,7 +4,7 @@ from viterbi import viterbii
 from hmmlearn import hmm
 from forward_and_back_algorithm import forward, backward, likelihood, posterior_prob, pbwd
 import matplotlib.pyplot as plt
-from baum_welch import baum_post, baum_welch_trans, baum_welch_emmis
+from baum_welch import baum_post, baum_welch_trans, baum_welch_emmis, gamma
 
 m = 2 # hidden states
 vv = 3 # visible states
@@ -175,16 +175,23 @@ new_emiss = emiss[-1]
 print('\nNEW TRANSITION:\n', new_trans)
 print('\nNEW EMISSION:\n', new_emiss)
 
-h = viterbii(sequence, boxes_prob, new_emiss, new_trans, m, L)[0]
-hh = np.argmax(h, axis=1)
+jop = np.argmax(gamma(sequence, boxes_prob, transition_matrix, emission_matrix, m, L), axis=1)
+pr = 0
+for i in range(L):
+    if jop[i] == counter_for_boxes[i]:
+        pr += 1
+
+x = 100 * pr / L
+print('\n', x, '%', '- процент совпадений')
+
 print('\nOUR HIDDEN:\n', counter_for_boxes, '\n')
-print('\nBW HIDDEN:\n', hh, '\n')
+print('\nBW HIDDEN:\n', jop, '\n')
 
 
 # our prediction vs viterbi
 ind = np.arange(L)
 p1 = plt.bar(ind, counter_for_boxes)
-p2 = plt.bar(ind, hid_seq, bottom=counter_for_boxes)
+p2 = plt.bar(ind, jop, bottom=counter_for_boxes)
 plt.title('Графическа оценка алгоритма Витерби')
 plt.legend((p1[0], p2[0]), ('OUR', 'VA'))
 plt.show()
@@ -193,6 +200,6 @@ plt.figure(figsize=(15, 4))
 plt.xlabel('Length of the sequence', fontsize=20)
 plt.ylabel('$P(x)$', fontsize=20)
 plt.title('Posterior probability and Viterbi most likely path', fontsize = 20)
-plt.plot(range(L), baum_post(sequence, boxes_prob, transition_matrix, emission_matrix, h, L)[:, 0], color='black')
-plt.plot(range(L), hh, color='blue', linestyle='dotted')
+plt.plot(range(L), baum_post(sequence, boxes_prob, transition_matrix, emission_matrix, m, L)[:, 0], color='black')
+plt.plot(range(L), jop, color='blue', linestyle='dotted')
 plt.show()

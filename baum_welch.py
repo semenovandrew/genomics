@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.special import logsumexp
 from viterbi import viterbii
 
 
@@ -74,7 +75,6 @@ def epsillon(obs, pi, t, e, m, l):
     beta = backward(obs, t, e, m, l)
     eps = np.zeros((l, m, m))
 
-    summ0 = 0
     for k in range(l):
         summ0 = 0
         for i in range(m):
@@ -82,13 +82,15 @@ def epsillon(obs, pi, t, e, m, l):
                 summ0 += alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]
         for i in range(m):
             for j in range(m):
-                eps[k - 1, i, j] = (alpha[k - 1, i] * t[i, j] * beta[k, j] * e[j, obs[k][1]]) / summ0
-
+                #eps[k - 1][i][j] = (alpha[k - 1][i] * t[i][j] * beta[k][j] * e[j, obs[k][1]]) / summ0
+                a = (alpha[k - 1][i] * t[i][j] * beta[k][j] * e[j, obs[k][1]])
+                b = summ0
+                eps[k - 1][i][j] = a / b
     return eps
 
 
 def baum_welch_trans(obs, pi, t, e, m, l):
-    global transition_matrix, boxes_prob
+    global transition_matrix
     gamm = gamma(obs, pi, t, e, m, l)
     epsi = epsillon(obs, pi, t, e, m, l)
 
@@ -110,12 +112,9 @@ def baum_welch_trans(obs, pi, t, e, m, l):
 
 
 def baum_welch_emmis(obs, pi, t, e, m, v, l):
-
-    global emission_matrix
+    global emmit
     gamm = gamma(obs, pi, t, e, m, l)
     em = np.zeros((m, v))
-    summg = 0
-    summgall = 0
     for i in range(m):
         for j in range(l):
             summg = 0
@@ -128,7 +127,6 @@ def baum_welch_emmis(obs, pi, t, e, m, v, l):
                 summg = summg + delt * gamm[k, i]
                 summgall += gamm[k, i]
             em[i, obs[j][1]] = summg / summgall
-
     e = em
-    emission_matrix = e
+    emmit = e
     return e
