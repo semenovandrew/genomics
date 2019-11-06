@@ -11,3 +11,4 @@ def viterbii(seq, pi, e, t, m, l):
             v[i, j] = max(v[i - 1][0] * t[0][j], v[i - 1][1] * t[1][j]) * e[j][seq[i][1]]  # перемножаются строка и стоблец
 
     return v, psi
+
